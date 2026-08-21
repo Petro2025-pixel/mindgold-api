@@ -1,0 +1,14 @@
+# Зависимости Node.js
+node_modules/
+
+# Переменные окружения и секреты
+.env
+.env.local
+
+# Системные файлы macOS
+.DS_Store
+
+# Линтеры и временные логи
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

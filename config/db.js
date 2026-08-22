@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import { env } from "./env.js";
 
 const connectDB = async () => {
-  const MONGO_URI = process.env.MONGO_URI;
+  const MONGO_URI = env.mongoUri;
   try {
     await mongoose.connect(MONGO_URI);
     console.log("✅ Connected to MongoDB (Docker)");

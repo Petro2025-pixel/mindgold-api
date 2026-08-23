@@ -35,9 +35,9 @@ UserSchema.index({ role: 1 });
 /**
  * Pre-save hook to hash user password before saving if modified.
  */
-UserSchema.pre('save', async function () {
-    if (!this.isModified('passwordHash')) return;
-    this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
+UserSchema.pre("save", async function () {
+  if (!this.isModified("passwordHash")) return;
+  this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
 });
 
 /**
@@ -46,7 +46,7 @@ UserSchema.pre('save', async function () {
  * @returns {Promise<boolean>} True if password matches.
  */
 UserSchema.methods.comparePassword = async function (plaintext) {
-    return bcrypt.compare(plaintext, this.passwordHash);
+  return bcrypt.compare(plaintext, this.passwordHash);
 };
 
 /**
@@ -54,11 +54,11 @@ UserSchema.methods.comparePassword = async function (plaintext) {
  * @returns {Object} User object without passwordHash.
  */
 UserSchema.methods.toSafeObject = function () {
-    const { passwordHash, __v, ...safe } = this.toObject();
-    return safe;
+  const { passwordHash, __v, ...safe } = this.toObject();
+  return safe;
 };
 
 /**
  * User Mongoose Model.
  */
-export const User = mongoose.model('User', UserSchema);
+export const User = mongoose.model("User", UserSchema);

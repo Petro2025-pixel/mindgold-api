@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import { env } from "./config/env.js";
+import authRouter from "./routes/authRouter.js";
+import { errorHandler } from "./middlewares/errorMiddleware.js";
 
 const PORT = env.port;
 
@@ -13,6 +15,10 @@ app.use(express.json());
 app.get("/api/v1/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date() });
 });
+
+app.use("/api/v1/users", authRouter);
+
+app.use(errorHandler);
 
 const startServer = async () => {
   await connectDB();

@@ -16,10 +16,6 @@ export const registerSchema = {
       minLength: 6,
       maxLength: 72,
     },
-    role: {
-      type: "string",
-      enum: ["user", "admin"],
-    },
   },
   additionalProperties: false,
 };

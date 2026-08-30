@@ -1,30 +1,28 @@
-import express from "express";
-import cors from "cors";
+import app from "./app.js";
 import connectDB from "./config/db.js";
 import { env } from "./config/env.js";
-import authRouter from "./routes/authRouter.js";
-import { errorHandler } from "./middlewares/errorMiddleware.js";
 
-const PORT = env.port;
+const PORT = env.port
 
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-app.get("/api/v1/health", (req, res) => {
-  res.status(200).json({ status: "ok", timestamp: new Date() });
-});
-
-app.use("/api/v1/users", authRouter);
-
-app.use(errorHandler);
-
+/**
+ * Initializes database connection and boots up the HTTP server.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
 const startServer = async () => {
-  await connectDB();
+  try {
+    await connectDB();
 
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+    app.listen(PORT, () => {
+      console.log(
+        `Server running in ${env.nodeEnv || "development"} mode on port ${PORT}`,
+      );
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error.message);
+    process.exit(1);
+  }
 };
+
 startServer();

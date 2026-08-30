@@ -1,10 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-/**
- * User schema definition.
- */
-const UserSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -17,10 +14,11 @@ const UserSchema = new mongoose.Schema(
     passwordHash: {
       type: String,
       required: true,
+      select: false,
     },
     role: {
       type: String,
-      enum: ["player", "editor", "admin"],
+      enum: ["player", "admin"],
       default: "player",
     },
   },
@@ -28,37 +26,32 @@ const UserSchema = new mongoose.Schema(
 );
 
 /**
- * Index for filtering users by role.
+ * Pre-save hook to hash user password before persisting to MongoDB.
+ * Triggers automatically on creation or whenever passwordHash is modified.
  */
-UserSchema.index({ role: 1 });
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("passwordHash")) {
+    return next();
+  }
 
-/**
- * Pre-save hook to hash user password before saving if modified.
- */
-UserSchema.pre("save", async function () {
-  if (!this.isModified("passwordHash")) return;
-  this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 /**
- * Compares plain text password with stored hash.
- * @param {string} plaintext - Password to verify.
- * @returns {Promise<boolean>} True if password matches.
+ * Helper method to compare candidate password with stored hash.
+ *
+ * @param {string} candidatePassword - Plain text password to check.
+ * @returns {Promise<boolean>} True if match, false otherwise.
  */
-UserSchema.methods.comparePassword = async function (plaintext) {
-  return bcrypt.compare(plaintext, this.passwordHash);
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.passwordHash);
 };
 
-/**
- * Removes sensitive fields before converting to JSON.
- * @returns {Object} User object without passwordHash.
- */
-UserSchema.methods.toSafeObject = function () {
-  const { passwordHash, __v, ...safe } = this.toObject();
-  return safe;
-};
-
-/**
- * User Mongoose Model.
- */
-export const User = mongoose.model("User", UserSchema);
+const User = mongoose.model("User", userSchema);
+export default User;

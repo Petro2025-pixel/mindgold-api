@@ -29,18 +29,13 @@ const userSchema = new mongoose.Schema(
  * Pre-save hook to hash user password before persisting to MongoDB.
  * Triggers automatically on creation or whenever passwordHash is modified.
  */
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
   if (!this.isModified("passwordHash")) {
-    return next();
+    return;
   }
 
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
+  const salt = await bcrypt.genSalt(10);
+  this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
 });
 
 /**

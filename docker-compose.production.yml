@@ -12,6 +12,16 @@ services:
       - PORT=3000
       - MONGO_URI=mongodb://mongo:27017/mindgold
       - JWT_SECRET=${JWT_SECRET}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 500M
     depends_on:
       - mongo
 

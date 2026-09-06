@@ -1,0 +1,27 @@
+name: Deploy MindGold API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy API to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            set -e
+            echo "--> Deploying Backend..."
+            cd /root/mindgold-api
+            git pull origin main
+            docker compose -f docker-compose.production.yml up -d --build --no-deps app
+            docker image prune -f
+            echo "--> Backend successfully deployed!"

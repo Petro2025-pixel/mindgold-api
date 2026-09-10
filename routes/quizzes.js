@@ -18,6 +18,7 @@ const router = Router();
  * @access  Public
  */
 router.get("/", getQuizzes);
+router.get("/:slug", getQuizBySlug);
 
 /**
  * @route   POST /api/v1/quizzes

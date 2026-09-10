@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authenticate, requireAdmin } from "../middlewares/authMiddleware.js";
 import {
   getQuizzes,
+  getQuizBySlug,
   createQuiz,
   deleteQuiz,
 } from "../controllers/quizController.js";

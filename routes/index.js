@@ -1,7 +1,7 @@
 import { Router } from "express";
 import authRouter from "./authRouter.js";
 import quizRoutes from "./quizzes.js";
-import gameRoutes from "./game.js";
+// import gameRoutes from "./game.js";
 
 /**
  * Main API Express router aggregating all domain-specific sub-routers.

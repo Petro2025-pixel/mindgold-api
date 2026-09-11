@@ -5,6 +5,7 @@ import {
   getQuizBySlug,
   createQuiz,
   deleteQuiz,
+  checkAnswer,
 } from "../controllers/quizController.js";
 
 /**
@@ -20,6 +21,8 @@ const router = Router();
  */
 router.get("/", getQuizzes);
 router.get("/:slug", getQuizBySlug);
+
+router.post("/:slug/questions/:questionId/check", checkAnswer);
 
 /**
  * @route   POST /api/v1/quizzes

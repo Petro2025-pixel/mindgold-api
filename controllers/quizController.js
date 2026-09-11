@@ -80,21 +80,11 @@ export const deleteQuiz = async (req, res, next) => {
     next(error);
   }
 };
-/**
- * Checks whether a given answer index is correct for a specific question,
- * without ever exposing the correct answer index itself in the response.
- */
+
 export const checkAnswer = async (req, res, next) => {
   try {
     const { slug, questionId } = req.params;
-    const { answerIndex } = req.body;
-
-    if (typeof answerIndex !== "number") {
-      return res.status(400).json({
-        error: "answerIndex must be a number",
-        code: "VALIDATION_ERROR",
-      });
-    }
+    const { answerText } = req.body;
 
     const quiz = await Quiz.findOne({ slug });
     if (!quiz) {
@@ -103,15 +93,23 @@ export const checkAnswer = async (req, res, next) => {
         .json({ error: "Quiz not found", code: "NOT_FOUND" });
     }
 
-    const question = quiz.questions.find((q) => q.id === questionId);
+    const question = quiz.questions.find(
+      (q) => q._id?.toString() === questionId || q.id === questionId,
+    );
+
     if (!question) {
       return res
         .status(404)
         .json({ error: "Question not found", code: "NOT_FOUND" });
     }
 
-    const isCorrect = answerIndex === question.correct;
-    res.json({ correct: isCorrect });
+    const correctOptionText = question.answers[question.correct];
+    const isCorrect = answerText === correctOptionText;
+
+    return res.json({
+      correct: isCorrect,
+      ...(!isCorrect && { correctAnswerText: correctOptionText }),
+    });
   } catch (error) {
     next(error);
   }

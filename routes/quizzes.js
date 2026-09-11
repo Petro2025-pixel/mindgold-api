@@ -7,6 +7,8 @@ import {
   deleteQuiz,
   checkAnswer,
 } from "../controllers/quizController.js";
+import { validate } from "../middlewares/validate.js";
+import { checkAnswerSchema } from "../schemas/quizSchema.js";
 
 /**
  * Express router managing quiz endpoints and administrative access controls.
@@ -22,7 +24,11 @@ const router = Router();
 router.get("/", getQuizzes);
 router.get("/:slug", getQuizBySlug);
 
-router.post("/:slug/questions/:questionId/check", checkAnswer);
+router.post(
+  "/:slug/questions/:questionId/check",
+  validate(checkAnswerSchema),
+  checkAnswer,
+);
 
 /**
  * @route   POST /api/v1/quizzes

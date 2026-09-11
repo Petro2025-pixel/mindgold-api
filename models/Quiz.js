@@ -5,10 +5,20 @@ import mongoose from "mongoose";
  */
 const QuestionSchema = new mongoose.Schema(
   {
-    id: { type: String, trim: true },
+    id: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 1,
+    },
     question: { type: String, required: true, trim: true },
     answers: [{ type: String, trim: true }],
-    correct: { type: Number, required: true, min: 0 },
+    correct: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 3,
+    },
     hint: { type: String, trim: true },
   },
   { _id: false },

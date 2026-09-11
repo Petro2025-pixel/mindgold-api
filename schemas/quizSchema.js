@@ -33,3 +33,16 @@ export const quizSchema = {
   },
   additionalProperties: false,
 };
+
+export const checkAnswerSchema = {
+  type: "object",
+  required: ["answerText"],
+  properties: {
+    answerText: {
+      type: "string",
+      minLength: 1,
+      maxLength: 500,
+    },
+  },
+  additionalProperties: false,
+};

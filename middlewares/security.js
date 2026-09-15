@@ -11,11 +11,10 @@ const corsOptions = {
     const allowedOrigins = [
       "https://mindgold.top",
       "https://www.mindgold.top",
-      "http://localhost:5173", // Vite dev server
+      "http://localhost:5173",
       "http://localhost:3000",
     ];
 
-    // Allow requests with no origin (like mobile apps, curl, or Postman)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -28,16 +27,18 @@ const corsOptions = {
 };
 
 /**
- * Rate limiting configuration for API routes.
- * Limits each IP to 100 requests per 15-minute window to prevent DDoS and brute-force attacks.
+ * Rate limiting for general API routes.
+ * Skips the /health endpoint — that one is polled frequently by clients
+ * and shouldn't consume the shared request budget.
  *
  * @type {import('express-rate-limit').Options}
  */
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.path === "/api/v1/health", // ← НОВОЕ
   message: { error: "Too many requests from this IP, please try again later." },
 });
 
@@ -63,23 +64,13 @@ const sanitizeBody = (req, res, next) => {
 
 /**
  * Configures global security middlewares for the Express application.
- * Applied protections:
- * - Helmet: Sets secure HTTP headers to prevent XSS and clickjacking.
- * - Express Rate Limit: Throttles excessive API requests.
- * - Mongo Sanitize: Removes untrusted `$` and `.` operators to prevent NoSQL injection attacks.
  *
- * @param {import('express').Application} app - The Express application instance.
+ * @param {import('express').Application} app
  * @returns {void}
  */
 export const setupSecurity = (app) => {
-app.use(cors(corsOptions));
-
-  // Secure HTTP headers
+  app.use(cors(corsOptions));
   app.use(helmet());
-
-  // Rate-limiting for all API endpoints
   app.use(apiLimiter);
-
-  // Custom NoSQL Sanitizer for req.body
   app.use(sanitizeBody);
 };

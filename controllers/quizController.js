@@ -106,10 +106,7 @@ export const checkAnswer = async (req, res, next) => {
     const correctOptionText = question.answers[question.correct];
     const isCorrect = answerText === correctOptionText;
 
-    return res.json({
-      correct: isCorrect,
-      ...(!isCorrect && { correctAnswerText: correctOptionText }),
-    });
+    return res.json({ correct: isCorrect });
   } catch (error) {
     next(error);
   }

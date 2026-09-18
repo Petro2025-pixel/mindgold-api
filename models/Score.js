@@ -2,18 +2,22 @@ import mongoose from "mongoose";
 
 /**
  * Mongoose schema definition for Score entity (game results history).
+ *
+ * `playerId` is optional — game supports anonymous players (name only).
+ * When auth is added, `playerId` will be linked to the User doc.
  */
 const ScoreSchema = new mongoose.Schema(
   {
     playerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      // optional — anonymous players allowed
     },
     playerName: {
       type: String,
       required: true,
       trim: true,
+      maxLength: 50,
     },
     quizId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -21,10 +25,6 @@ const ScoreSchema = new mongoose.Schema(
       required: true,
     },
     quizTitle: {
-      type: String,
-      trim: true,
-    },
-    quizFile: {
       type: String,
       trim: true,
     },
@@ -39,10 +39,6 @@ const ScoreSchema = new mongoose.Schema(
       min: 1,
     },
     wrongIds: [{ type: String }],
-    date: {
-      type: String,
-      default: () => new Date().toLocaleDateString("en-GB"),
-    },
   },
   {
     timestamps: true,
@@ -50,12 +46,11 @@ const ScoreSchema = new mongoose.Schema(
 );
 
 /**
- * Indexes for history queries, quiz leaderboards, and user stats.
+ * Indexes for leaderboards and player history.
  */
-ScoreSchema.index({ playerId: 1 });
-ScoreSchema.index({ quizId: 1 });
-ScoreSchema.index({ score: -1 });
-ScoreSchema.index({ playerId: 1, quizId: 1 });
+ScoreSchema.index({ quizId: 1, score: -1 }); // leaderboard per quiz
+ScoreSchema.index({ playerName: 1, createdAt: -1 }); // player history
+ScoreSchema.index({ createdAt: -1 }); // latest results
 
 /**
  * Score Mongoose Model.

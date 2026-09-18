@@ -1,6 +1,7 @@
 import { Router } from "express";
 import authRouter from "./authRouter.js";
 import quizRoutes from "./quizzes.js";
+import scoreRoutes from "./scores.js";
 // import gameRoutes from "./game.js";
 
 /**
@@ -18,6 +19,7 @@ const router = Router();
 // Mount domain-specific route modules
 router.use("/users", authRouter);
 router.use("/quizzes", quizRoutes);
+router.use("/scores", scoreRoutes);
 // router.use("/game", gameRoutes);
 
 export default router;

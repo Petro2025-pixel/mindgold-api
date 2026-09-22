@@ -8,7 +8,8 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "seed:quizzes": "node scripts/seedQuizzes.js",
-    "promote:admin": "node scripts/promoteAdmin.js"
+    "promote:admin": "node scripts/promoteAdmin.js",
+    "migrate:categories": "node scripts/migrateCategories.js"
   },
   "keywords": [],
   "author": "Petro Lungu",

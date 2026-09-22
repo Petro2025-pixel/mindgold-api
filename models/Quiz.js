@@ -37,6 +37,18 @@ const QuizSchema = new mongoose.Schema(
       trim: true,
     },
     quizTitle: { type: String, required: true, trim: true },
+    category: {
+      type: String,
+      lowercase: true,
+      trim: true,
+      default: "other",
+      index: true,
+    },
+    tags: {
+      type: [String],
+      default: [],
+      index: true,
+    },
     questions: [QuestionSchema],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },

@@ -7,6 +7,7 @@ import {
   deleteQuiz,
   checkAnswer,
 } from "../controllers/quizController.js";
+import { Quiz } from "../models/Quiz.js";
 import { validate } from "../middlewares/validate.js";
 import { checkAnswerSchema } from "../schemas/quizSchema.js";
 
@@ -22,6 +23,20 @@ const router = Router();
  * @access  Public
  */
 router.get("/", getQuizzes);
+
+/**
+ * @route   GET /api/v1/quizzes/categories
+ * @desc    Get list of unique quiz categories
+ * @access  Public
+ */
+router.get("/categories", async (req, res, next) => {
+  try {
+    const categories = await Quiz.distinct("category");
+    res.json(categories.filter(Boolean).sort());
+  } catch (err) {
+    next(err);
+  }
+});
 router.get("/:slug", getQuizBySlug);
 
 router.post(

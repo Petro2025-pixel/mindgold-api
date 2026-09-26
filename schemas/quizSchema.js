@@ -1,10 +1,27 @@
+/**
+ * AJV schema for creating a new quiz.
+ * Validates incoming POST /api/v1/quizzes request body.
+ *
+ * Required fields: quizTitle, questions, category.
+ * Each question must have: question, answers (2–4), correct (index 0–3).
+ *
+ * @type {object}
+ */
 export const quizSchema = {
   type: "object",
-  required: ["quizTitle", "questions"],
+  required: ["quizTitle", "questions", "category"],
   properties: {
     quizTitle: {
       type: "string",
       minLength: 1,
+    },
+    category: {
+      type: "string",
+      minLength: 1,
+    },
+    tags: {
+      type: "array",
+      items: { type: "string", minLength: 1 },
     },
     questions: {
       type: "array",
@@ -34,6 +51,12 @@ export const quizSchema = {
   additionalProperties: false,
 };
 
+/**
+ * AJV schema for checking a single quiz answer.
+ * Validates incoming POST /api/v1/quizzes/:slug/questions/:questionId/check request body.
+ *
+ * @type {object}
+ */
 export const checkAnswerSchema = {
   type: "object",
   required: ["answerText"],

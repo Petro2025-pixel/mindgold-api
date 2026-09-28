@@ -206,3 +206,47 @@ export const checkAnswer = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Returns a single quiz WITH correct answers and hints included.
+ * Used exclusively by the CheatSheet study mode.
+ *
+ * Unlike `getQuizBySlug` (which strips correct answers to prevent
+ * cheating during gameplay), this endpoint intentionally exposes
+ * `correct` and `hint` so the user can study the material.
+ *
+ * GET /api/v1/cheatsheet/:slug
+ * Access: Private (any authenticated user)
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
+export const getCheatSheet = async (req, res, next) => {
+  try {
+    const quiz = await Quiz.findOne({ slug: req.params.slug });
+    if (!quiz) {
+      return res
+        .status(404)
+        .json({ error: "Quiz not found", code: "NOT_FOUND" });
+    }
+
+    res.json({
+      quiz: {
+        slug: quiz.slug,
+        quizTitle: quiz.quizTitle,
+        category: quiz.category,
+        tags: quiz.tags,
+        questions: quiz.questions.map((q) => ({
+          id: q.id,
+          question: q.question,
+          answers: q.answers,
+          correct: q.correct,
+          hint: q.hint || null,
+        })),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -2,6 +2,7 @@ import { Router } from "express";
 import authRouter from "./authRouter.js";
 import quizRoutes from "./quizzes.js";
 import scoreRoutes from "./scores.js";
+import cheatsheetRouter from "./cheatsheet.js";
 import { getCategories, getTags } from "../controllers/quizController.js";
 
 /**
@@ -26,5 +27,6 @@ router.get("/tags", getTags);
 router.use("/users", authRouter);
 router.use("/quizzes", quizRoutes);
 router.use("/scores", scoreRoutes);
+router.use("/cheatsheet", cheatsheetRouter);
 
 export default router;

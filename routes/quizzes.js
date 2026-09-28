@@ -46,20 +46,20 @@ router.post(
 
 /**
  * @route   POST /api/v1/quizzes
- * @desc    Create a new quiz (admin only, rate-limited to 3/day in test mode)
- * @access  Private (Admin)
+ * @desc    Create a new quiz
+ *          - admins: unlimited
+ *          - regular users: 3/day
+ * @access  Private (any authenticated user)
  *
  * Middleware order:
  *   1. authenticate       — verify JWT, populate req.user
- *   2. requireAdmin       — ensure req.user.role === "admin"
- *   3. createQuizLimiter  — enforce 3 quizzes/day per user
- *   4. validate           — AJV validation against quizSchema
- *   5. createQuiz         — persist to MongoDB
+ *   2. createQuizLimiter  — admins bypass, others capped at 3/day
+ *   3. validate           — AJV validation against quizSchema
+ *   4. createQuiz         — persist to MongoDB
  */
 router.post(
   "/",
   authenticate,
-  requireAdmin,
   createQuizLimiter,
   validate(quizSchema),
   createQuiz,

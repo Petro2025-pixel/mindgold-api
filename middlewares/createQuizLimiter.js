@@ -21,6 +21,12 @@ export const createQuizLimiter = rateLimit({
   max: 3, // 3 quizzes per day per user
 
   /**
+   * Admins bypass the limit — they may create unlimited quizzes.
+   * Regular users (role !== "admin") are capped at 3 per 24h.
+   */
+  skip: (req) => req.user?.role === "admin",
+
+  /**
    * Use the authenticated user's ID as the rate limit key.
    * Since this limiter is mounted AFTER `authenticate`,
    * `req.user.id` is guaranteed to be present.
